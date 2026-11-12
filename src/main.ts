@@ -19,6 +19,10 @@ const markdownExtensions = [
 
 const plugin = () => (tree: any) => {
   visit(tree, ["link", "linkReference"], (node: any) => {
+    if (!node.url || /^[a-z][a-z0-9+.-]*:/i.test(node.url)) {   // absolute URL (https:, mailto:, …) or empty: leave it alone
+      console.log(`${node.url} is not a local link`);
+      return;
+    }
     const fakeURL = new URL(node.url, "file:///Z:/-/");
     const { ext, name } = parse(fileURLToPath(fakeURL));
 
